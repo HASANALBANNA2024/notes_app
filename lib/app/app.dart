@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/app_theme.dart';
+import '../features/splash/splash_screen.dart';
 
 class TaskManagerApp extends StatelessWidget {
   const TaskManagerApp({super.key});
@@ -11,7 +12,7 @@ class TaskManagerApp extends StatelessWidget {
       title: 'Task Manager',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      // home: const SplashScreen(),
+      home: const SplashScreen(),
     );
   }
 }
