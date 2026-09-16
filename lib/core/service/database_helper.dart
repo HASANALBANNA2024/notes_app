@@ -18,18 +18,18 @@ class DatabaseHelper {
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    // Version 2 দেওয়া হলো যেন নতুন কলাম সঠিকভাবে যুক্ত হয়
+    // ✅ FIX #2: Version 3 for complete schema with all columns
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
   }
 
-  /// Create Table Function
+  /// Create Table Function - Complete schema
   Future<void> _createDB(Database db, int version) async {
-    await db.execute('''
+    await db.execute('''\
      CREATE TABLE notes (
         id TEXT PRIMARY KEY,
         title TEXT,
@@ -46,12 +46,31 @@ class DatabaseHelper {
     ''');
   }
 
-  /// Handle Migration/Upgrade
+  /// ✅ FIX #2: Handle migration/upgrade properly from v1 -> v2 -> v3
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    // Upgrade from v1 to v2
     if (oldVersion < 2) {
-      await db.execute(
-        'ALTER TABLE notes ADD COLUMN isLocked INTEGER DEFAULT 0',
-      );
+      try {
+        await db.execute(
+          'ALTER TABLE notes ADD COLUMN isLocked INTEGER DEFAULT 0',
+        );
+        print('Migration v1->v2: Added isLocked column');
+      } catch (e) {
+        print('Migration v1->v2 warning (column might exist): $e');
+      }
+    }
+
+    // Upgrade from v2 to v3 (or v1 to v3)
+    if (oldVersion < 3) {
+      try {
+        // Add reminderOffsetType if it doesn't exist
+        await db.execute(
+          'ALTER TABLE notes ADD COLUMN reminderOffsetType TEXT DEFAULT "exact"',
+        );
+        print('Migration v2->v3: Added reminderOffsetType column');
+      } catch (e) {
+        print('Migration v2->v3 warning (column might exist): $e');
+      }
     }
   }
 

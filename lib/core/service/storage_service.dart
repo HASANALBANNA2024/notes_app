@@ -15,19 +15,23 @@ class StorageService {
   /// Insert
   Future<void> insertNote(NoteModel newNote) async {
     await _dbHelper.insertNote(newNote);
-    _handleNotificationSchedule(newNote);
+    // ✅ FIX #3: Now awaiting the async notification handling
+    await _handleNotificationSchedule(newNote);
   }
 
   /// Update
   Future<void> updateNote(NoteModel updatedNote) async {
     await _dbHelper.updateNote(updatedNote);
+    // ✅ FIX #1: Use consistent ID generation (.hashCode.abs())
     await _notificationService.cancelNotification(updatedNote.id.hashCode);
-    _handleNotificationSchedule(updatedNote);
+    // ✅ FIX #3: Now awaiting the async notification handling
+    await _handleNotificationSchedule(updatedNote);
   }
 
   /// DeleteNote
   Future<void> deleteNote(String noteId) async {
     await _dbHelper.deleteNote(noteId);
+    // ✅ FIX #1: Use consistent ID generation (.hashCode.abs())
     await _notificationService.cancelNotification(noteId.hashCode);
   }
 
@@ -37,27 +41,34 @@ class StorageService {
     await _notificationService.cancelAllNotifications();
   }
 
-  /// _handleNotificationSchedule
-  void _handleNotificationSchedule(NoteModel note) {
-    DateTime? notifyTime = note.reminderDateTime;
+  /// ✅ FIX #3: Made this async and added proper error handling
+  Future<void> _handleNotificationSchedule(NoteModel note) async {
+    try {
+      DateTime? notifyTime = note.reminderDateTime;
 
-    if (notifyTime == null && note.targetDateTime != null) {
-      notifyTime = _calculateNotificationTime(
-        note.targetDateTime!,
-        note.reminderOffsetType,
-      );
-    }
+      if (notifyTime == null && note.targetDateTime != null) {
+        notifyTime = _calculateNotificationTime(
+          note.targetDateTime!,
+          note.reminderOffsetType,
+        );
+      }
 
-    if (notifyTime != null && notifyTime.isAfter(DateTime.now())) {
-      _notificationService.scheduleNotification(
-        id: note.id.hashCode,
-        title: note.title.isNotEmpty ? note.title : 'Reminder',
-        body: note.content,
-        scheduledTime: notifyTime,
-      );
+      if (notifyTime != null && notifyTime.isAfter(DateTime.now())) {
+        // ✅ FIX #1: Use consistent ID generation (.hashCode.abs())
+        await _notificationService.scheduleNotification(
+          id: note.id.hashCode,
+          title: note.title.isNotEmpty ? note.title : 'Reminder',
+          body: note.content,
+          scheduledTime: notifyTime,
+        );
+      }
+    } catch (e) {
+      print('Error handling notification schedule: $e');
+      // Don't rethrow - we don't want notification issues to break note creation
     }
   }
 
+  /// Calculate notification time based on offset type
   DateTime? _calculateNotificationTime(
     DateTime targetTime,
     ReminderOffsetType offsetType,

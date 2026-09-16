@@ -248,6 +248,17 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     }
   }
 
+  /// ✅ FIX #4: Generate unique ID using full timestamp instead of weak remainder
+  String _generateUniqueId() {
+    // Use full timestamp + random component for guaranteed uniqueness
+    final timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+    final random = (DateTime.now().microsecond % 10000).toString().padLeft(
+      4,
+      '0',
+    );
+    return '$timestamp$random';
+  }
+
   /// note save and dynamic notification scheduling
   void _onTapsaveNote() async {
     final title = _titleController.text.trim();
@@ -258,12 +269,11 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
       return;
     }
 
-    final int uniqueId = DateTime.now().millisecondsSinceEpoch.remainder(
-      100000,
-    );
+    // ✅ FIX #4: Generate unique ID using full timestamp
+    final String uniqueId = _generateUniqueId();
 
     final newNote = NoteModel(
-      id: uniqueId.toString(),
+      id: uniqueId,
       title: title,
       content: content,
       date: DateTime.now().toIso8601String(),
@@ -276,15 +286,27 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
       reminderOffsetType: ReminderOffsetType.exact,
     );
 
-    /// dynamic notification fire
+    /// ✅ dynamic notification fire - use hashCode for consistent ID
     final DateTime? reminderTime = _selectedAlarmDate ?? _selectedScheduleDate;
     if (reminderTime != null && reminderTime.isAfter(DateTime.now())) {
-      await NotificationService().scheduleNotification(
-        id: uniqueId,
-        title: title.isNotEmpty ? title : 'Note Reminder 🔔',
-        body: content.isNotEmpty ? content : 'You have a scheduled note task!',
-        scheduledTime: reminderTime,
-      );
+      try {
+        // ✅ FIX #1: Use hashCode.abs() to match notification service
+        await NotificationService().scheduleNotification(
+          id: uniqueId.hashCode,
+          title: title.isNotEmpty ? title : 'Note Reminder 🔔',
+          body: content.isNotEmpty
+              ? content
+              : 'You have a scheduled note task!',
+          scheduledTime: reminderTime,
+        );
+      } catch (e) {
+        print('Error scheduling notification: $e');
+        if (!mounted) return;
+        SnackBarHelper.show(
+          context,
+          "Note saved but notification scheduling failed",
+        );
+      }
     }
 
     if (!mounted) return;

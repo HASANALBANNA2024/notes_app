@@ -34,46 +34,66 @@ class NotificationService {
     }
   }
 
+  /// Schedule notification with consistent ID handling
   Future<void> scheduleNotification({
     required int id,
     required String title,
     required String body,
     required DateTime scheduledTime,
   }) async {
-    final notificationId = id.abs();
+    try {
+      // ✅ FIX #1: Use abs() to ensure positive ID
+      final notificationId = id.abs();
 
-    await _notificationsPlugin.zonedSchedule(
-      notificationId,
-      title,
-      body,
-      tz.TZDateTime.from(scheduledTime, tz.local),
-      const NotificationDetails(
-        android: AndroidNotificationDetails(
-          'notes_reminder_channel',
-          'Note Reminders',
-          channelDescription: 'Notifications for note task reminders',
-          importance: Importance.max,
-          priority: Priority.high,
-          playSound: true,
-          enableVibration: true,
+      await _notificationsPlugin.zonedSchedule(
+        notificationId,
+        title,
+        body,
+        tz.TZDateTime.from(scheduledTime, tz.local),
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'notes_reminder_channel',
+            'Note Reminders',
+            channelDescription: 'Notifications for note task reminders',
+            importance: Importance.max,
+            priority: Priority.high,
+            playSound: true,
+            enableVibration: true,
+          ),
+          iOS: DarwinNotificationDetails(
+            presentSound: true,
+            presentAlert: true,
+            presentBadge: true,
+          ),
         ),
-        iOS: DarwinNotificationDetails(
-          presentSound: true,
-          presentAlert: true,
-          presentBadge: true,
-        ),
-      ),
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
-    );
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+      );
+    } catch (e) {
+      print('Error scheduling notification: $e');
+      rethrow;
+    }
   }
 
+  /// Cancel notification with consistent ID handling
   Future<void> cancelNotification(int id) async {
-    await _notificationsPlugin.cancel(id.abs());
+    try {
+      // ✅ FIX #1: Use abs() to ensure positive ID (same as scheduling)
+      final notificationId = id.abs();
+      await _notificationsPlugin.cancel(notificationId);
+    } catch (e) {
+      print('Error cancelling notification: $e');
+      rethrow;
+    }
   }
 
   Future<void> cancelAllNotifications() async {
-    await _notificationsPlugin.cancelAll();
+    try {
+      await _notificationsPlugin.cancelAll();
+    } catch (e) {
+      print('Error cancelling all notifications: $e');
+      rethrow;
+    }
   }
 }

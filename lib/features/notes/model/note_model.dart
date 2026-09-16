@@ -44,9 +44,9 @@ class NoteModel extends Equatable {
     'reminderOffsetType': reminderOffsetType.name,
   };
 
-  /// SQLite DB converter read data from db (1/0 -> bool)
+  /// ✅ FIX #5: Proper type conversion with null safety
   factory NoteModel.fromMap(Map<String, dynamic> map) => NoteModel(
-    id: map['id'] as String,
+    id: map['id'] as String? ?? '',
     title: map['title'] as String? ?? '',
     content: map['content'] as String? ?? '',
     date: map['date'] as String? ?? '',
@@ -55,16 +55,32 @@ class NoteModel extends Equatable {
     isPinned: (map['isPinned'] as int? ?? 0) == 1,
     isLocked: (map['isLocked'] as int? ?? 0) == 1,
     targetDateTime: map['targetDateTime'] != null
-        ? DateTime.parse(map['targetDateTime'] as String)
+        ? DateTime.tryParse(map['targetDateTime'] as String)
         : null,
     reminderDateTime: map['reminderDateTime'] != null
-        ? DateTime.parse(map['reminderDateTime'] as String)
+        ? DateTime.tryParse(map['reminderDateTime'] as String)
         : null,
-    reminderOffsetType: ReminderOffsetType.values.firstWhere(
-      (e) => e.name == map['reminderOffsetType'],
-      orElse: () => ReminderOffsetType.exact,
+    // ✅ FIX #5: Handle null reminderOffsetType safely
+    reminderOffsetType: _parseReminderOffsetType(
+      map['reminderOffsetType'] as String?,
     ),
   );
+
+  /// ✅ Helper function to safely parse reminderOffsetType
+  static ReminderOffsetType _parseReminderOffsetType(String? value) {
+    if (value == null || value.isEmpty) {
+      return ReminderOffsetType.exact;
+    }
+    try {
+      return ReminderOffsetType.values.firstWhere(
+        (e) => e.name == value,
+        orElse: () => ReminderOffsetType.exact,
+      );
+    } catch (e) {
+      print('Error parsing reminderOffsetType: $e, defaulting to exact');
+      return ReminderOffsetType.exact;
+    }
+  }
 
   @override
   List<Object?> get props => [
@@ -75,7 +91,7 @@ class NoteModel extends Equatable {
     badgeText,
     badgeType,
     isPinned,
-    isLocked, // <-- ৫. Equatable এ যুক্ত করা হলো
+    isLocked,
     targetDateTime,
     reminderDateTime,
     reminderOffsetType,
