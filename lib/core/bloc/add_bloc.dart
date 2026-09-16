@@ -17,12 +17,11 @@ class AddBloc extends Bloc<BaseEvent, BaseState> {
   AddBloc({StorageService? storageservice})
     : storageService = storageservice ?? StorageService(),
       super(BaseInitialState()) {
-    /// note add event
     on<AddNoteEvent>((event, emit) async {
       emit(BaseLoadingState());
       try {
         await storageService.insertNote(event.note);
-        final updatedNotes = storageService.getAllNotes();
+        final updatedNotes = await storageService.getAllNotes();
         emit(BaseSuccessState<List<NoteModel>>(updatedNotes));
       } catch (e) {
         emit(BaseFailureState(e.toString()));

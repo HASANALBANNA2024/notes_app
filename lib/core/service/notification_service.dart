@@ -1,6 +1,6 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:timezone/data/latest_all.dart' as tz show initializeTimeZones;
-import 'package:timezone/timezone.dart' as tz show TZDateTime, local;
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -10,7 +10,6 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  /// notifications schedule
   Future<void> init() async {
     tz.initializeTimeZones();
 
@@ -22,41 +21,58 @@ class NotificationService {
       iOS: DarwinInitializationSettings(),
     );
 
-    await _notificationsPlugin.initialize(settings: settings);
+    await _notificationsPlugin.initialize(settings);
+
+    final androidPlugin = _notificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
+
+    if (androidPlugin != null) {
+      await androidPlugin.requestNotificationsPermission();
+      await androidPlugin.requestExactAlarmsPermission();
+    }
   }
 
-  /// notification schedule
   Future<void> scheduleNotification({
     required int id,
     required String title,
     required String body,
     required DateTime scheduledTime,
   }) async {
+    final notificationId = id.abs();
+
     await _notificationsPlugin.zonedSchedule(
-      id: id,
-      title: title,
-      body: body,
-      scheduledDate: tz.TZDateTime.from(scheduledTime, tz.local),
-      notificationDetails: const NotificationDetails(
+      notificationId,
+      title,
+      body,
+      tz.TZDateTime.from(scheduledTime, tz.local),
+      const NotificationDetails(
         android: AndroidNotificationDetails(
           'notes_reminder_channel',
           'Note Reminders',
           channelDescription: 'Notifications for note task reminders',
           importance: Importance.max,
           priority: Priority.high,
+          playSound: true,
+          enableVibration: true,
         ),
-        iOS: DarwinNotificationDetails(),
+        iOS: DarwinNotificationDetails(
+          presentSound: true,
+          presentAlert: true,
+          presentBadge: true,
+        ),
       ),
       androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
     );
   }
 
-  /// notification cancel
   Future<void> cancelNotification(int id) async {
-    await _notificationsPlugin.cancel(id: id);
+    await _notificationsPlugin.cancel(id.abs());
   }
 
-  /// all notification cancel method
   Future<void> cancelAllNotifications() async {
     await _notificationsPlugin.cancelAll();
   }

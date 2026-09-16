@@ -8,6 +8,8 @@ class AppTextField extends StatelessWidget {
   final bool readOnly;
   final TextInputType keyboardType;
   final String? Function(String?)? validator;
+  final TextStyle? style;
+  final int? maxLines;
 
   const AppTextField({
     super.key,
@@ -18,29 +20,42 @@ class AppTextField extends StatelessWidget {
     this.readOnly = false,
     this.keyboardType = TextInputType.text,
     this.validator,
+    this.style,
+    this.maxLines = 1,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          labelText,
-          style: const TextStyle(
-            fontFamily: 'Manrope',
-            fontSize: 11.5,
-            fontWeight: FontWeight.w700,
+        if (labelText.isNotEmpty) ...[
+          Text(
+            labelText,
+            style: const TextStyle(
+              fontFamily: 'Manrope',
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
+            ),
           ),
-        ),
-        const SizedBox(height: 7),
+          const SizedBox(height: 7),
+        ],
         TextFormField(
           controller: controller,
           obscureText: obscureText,
           readOnly: readOnly,
           keyboardType: keyboardType,
           validator: validator,
-          decoration: InputDecoration(hintText: hintText),
+          style: style,
+          maxLines: maxLines,
+          decoration: InputDecoration(
+            hintText: hintText,
+            border: InputBorder.none,
+            enabledBorder: InputBorder.none,
+            focusedBorder: InputBorder.none,
+            contentPadding: EdgeInsets.zero,
+          ),
         ),
       ],
     );

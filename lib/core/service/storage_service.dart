@@ -1,65 +1,43 @@
-import 'package:get_storage/get_storage.dart';
-
 import '../../features/notes/model/note_model.dart';
+import 'database_helper.dart';
 import 'notification_service.dart';
 
+///  database helper connect to
 class StorageService {
-  final GetStorage _box = GetStorage();
+  final DatabaseHelper _dbHelper = DatabaseHelper.instance;
   final NotificationService _notificationService = NotificationService();
 
-  static const String _notesTable = 'notes_table';
-
-  /// all notes (Read)
-  List<NoteModel> getAllNotes() {
-    final List<dynamic>? storedData = _box.read<List<dynamic>>(_notesTable);
-    if (storedData != null && storedData.isNotEmpty) {
-      return storedData
-          .map((item) => NoteModel.fromJson(Map<String, dynamic>.from(item)))
-          .toList();
-    }
-    return [];
+  /// READ
+  Future<List<NoteModel>> getAllNotes() async {
+    return await _dbHelper.getAllNotes();
   }
 
-  /// Create
+  /// Insert
   Future<void> insertNote(NoteModel newNote) async {
-    List<NoteModel> notes = getAllNotes();
-    notes.insert(0, newNote);
-
-    await _box.write(_notesTable, notes.map((n) => n.toJson()).toList());
+    await _dbHelper.insertNote(newNote);
     _handleNotificationSchedule(newNote);
   }
 
   /// Update
   Future<void> updateNote(NoteModel updatedNote) async {
-    List<NoteModel> notes = getAllNotes();
-    int index = notes.indexWhere((n) => n.id == updatedNote.id);
-
-    if (index != -1) {
-      notes[index] = updatedNote;
-      await _box.write(_notesTable, notes.map((n) => n.toJson()).toList());
-
-      /// old schedule change and new schedule
-      await _notificationService.cancelNotification(updatedNote.id.hashCode);
-      _handleNotificationSchedule(updatedNote);
-    }
+    await _dbHelper.updateNote(updatedNote);
+    await _notificationService.cancelNotification(updatedNote.id.hashCode);
+    _handleNotificationSchedule(updatedNote);
   }
 
-  /// Delete
+  /// DeleteNote
   Future<void> deleteNote(String noteId) async {
-    List<NoteModel> notes = getAllNotes();
-    notes.removeWhere((n) => n.id == noteId);
-
-    await _box.write(_notesTable, notes.map((n) => n.toJson()).toList());
+    await _dbHelper.deleteNote(noteId);
     await _notificationService.cancelNotification(noteId.hashCode);
   }
 
-  /// clear all schedule
+  /// ClearNotes Table
   Future<void> clearNotesTable() async {
-    await _box.remove(_notesTable);
+    await _dbHelper.clearNote();
     await _notificationService.cancelAllNotifications();
   }
 
-  /// notification scheduling handler
+  /// _handleNotificationSchedule
   void _handleNotificationSchedule(NoteModel note) {
     DateTime? notifyTime = note.reminderDateTime;
 
@@ -70,18 +48,16 @@ class StorageService {
       );
     }
 
-    /// schedule after time
     if (notifyTime != null && notifyTime.isAfter(DateTime.now())) {
       _notificationService.scheduleNotification(
         id: note.id.hashCode,
-        title: 'Reminder: ${note.title}',
+        title: note.title.isNotEmpty ? note.title : 'Reminder',
         body: note.content,
         scheduledTime: notifyTime,
       );
     }
   }
 
-  /// private time based custom offset
   DateTime? _calculateNotificationTime(
     DateTime targetTime,
     ReminderOffsetType offsetType,

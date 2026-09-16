@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 
-/// common base event
 abstract class BaseEvent extends Equatable {
   const BaseEvent();
   @override
@@ -9,7 +8,6 @@ abstract class BaseEvent extends Equatable {
 
 class FetchDataEvent extends BaseEvent {}
 
-/// common base states
 abstract class BaseState extends Equatable {
   const BaseState();
   @override
@@ -31,6 +29,7 @@ class BaseSuccessState<T> extends BaseState {
 class BaseFailureState extends BaseState {
   final String errorMessage;
   const BaseFailureState(this.errorMessage);
+
   @override
   List<Object?> get props => [errorMessage];
 }

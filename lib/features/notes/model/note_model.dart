@@ -10,8 +10,9 @@ class NoteModel extends Equatable {
   final String badgeText;
   final String badgeType;
   final bool isPinned;
-  final DateTime? targetDateTime; //notes main time
-  final DateTime? reminderDateTime; // note reminder time
+  final bool isLocked;
+  final DateTime? targetDateTime;
+  final DateTime? reminderDateTime;
   final ReminderOffsetType reminderOffsetType;
 
   const NoteModel({
@@ -22,40 +23,45 @@ class NoteModel extends Equatable {
     required this.badgeText,
     required this.badgeType,
     this.isPinned = false,
+    this.isLocked = false,
     this.targetDateTime,
     this.reminderDateTime,
     this.reminderOffsetType = ReminderOffsetType.exact,
   });
 
-  Map<String, dynamic> toJson() => {
+  /// SQLite DB-converter for DB (bool -> 1/0)
+  Map<String, dynamic> toMap() => {
     'id': id,
     'title': title,
     'content': content,
     'date': date,
     'badgeText': badgeText,
     'badgeType': badgeType,
-    'isPinned': isPinned,
+    'isPinned': isPinned ? 1 : 0,
+    'isLocked': isLocked ? 1 : 0,
     'targetDateTime': targetDateTime?.toIso8601String(),
     'reminderDateTime': reminderDateTime?.toIso8601String(),
     'reminderOffsetType': reminderOffsetType.name,
   };
 
-  factory NoteModel.fromJson(Map<String, dynamic> json) => NoteModel(
-    id: json['id'] as String,
-    title: json['title'] as String,
-    content: json['content'] as String,
-    date: json['date'] as String,
-    badgeText: json['badgeText'] as String,
-    badgeType: json['badgeType'] as String,
-    isPinned: json['isPinned'] as bool? ?? false,
-    targetDateTime: json['targetDateTime'] != null
-        ? DateTime.parse(json['targetDateTime'] as String)
+  /// SQLite DB converter read data from db (1/0 -> bool)
+  factory NoteModel.fromMap(Map<String, dynamic> map) => NoteModel(
+    id: map['id'] as String,
+    title: map['title'] as String? ?? '',
+    content: map['content'] as String? ?? '',
+    date: map['date'] as String? ?? '',
+    badgeText: map['badgeText'] as String? ?? '',
+    badgeType: map['badgeType'] as String? ?? '',
+    isPinned: (map['isPinned'] as int? ?? 0) == 1,
+    isLocked: (map['isLocked'] as int? ?? 0) == 1,
+    targetDateTime: map['targetDateTime'] != null
+        ? DateTime.parse(map['targetDateTime'] as String)
         : null,
-    reminderDateTime: json['reminderDateTime'] != null
-        ? DateTime.parse(json['reminderDateTime'] as String)
+    reminderDateTime: map['reminderDateTime'] != null
+        ? DateTime.parse(map['reminderDateTime'] as String)
         : null,
     reminderOffsetType: ReminderOffsetType.values.firstWhere(
-      (e) => e.name == json['reminderOffsetType'],
+      (e) => e.name == map['reminderOffsetType'],
       orElse: () => ReminderOffsetType.exact,
     ),
   );
@@ -69,6 +75,7 @@ class NoteModel extends Equatable {
     badgeText,
     badgeType,
     isPinned,
+    isLocked, // <-- ৫. Equatable এ যুক্ত করা হলো
     targetDateTime,
     reminderDateTime,
     reminderOffsetType,
