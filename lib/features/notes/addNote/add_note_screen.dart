@@ -12,6 +12,7 @@ import 'package:notes_app/core/widgets/custom_app_bar.dart';
 import 'package:notes_app/features/notes/addNote/widgets/note_action_bar.dart';
 import 'package:notes_app/features/notes/addNote/widgets/notice_action_helper.dart';
 
+import '../../../core/service/notification_service.dart';
 import '../model/note_model.dart';
 
 class AddNoteScreen extends StatefulWidget {
@@ -76,7 +77,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Title Field (Auto-expands with content)
+              /// Title Field
               AppTextField(
                 controller: _titleController,
                 hintText: "Title",
@@ -90,7 +91,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
               ),
               const Divider(color: Colors.grey, thickness: 0.2),
 
-              // Active Selection Chips
+              /// Active Selection Chips
               if (_isPinned ||
                   _isLocked ||
                   _selectedLabel.isNotEmpty ||
@@ -182,7 +183,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
                 const SizedBox(height: 8),
               ],
 
-              // Content Field (Auto-expands as text grows)
+              // Content Field
               AppTextField(
                 controller: _contentController,
                 labelText: "",
@@ -196,7 +197,7 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
               const Divider(color: Colors.grey, thickness: 0.2),
               const SizedBox(height: 12),
 
-              // Action Buttons Row (Placed directly below content)
+              /// Action Buttons Row
               NoteActionBar(
                 isPinned: _isPinned,
                 isLocked: _isLocked,
@@ -223,17 +224,32 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
     if (label != null) setState(() => _selectedLabel = label);
   }
 
+  /// permission check schedule pick
   Future<void> _handleSchedulePick() async {
-    final picked = await NoteActionHelper.pickReminder(context);
-    if (picked != null) setState(() => _selectedScheduleDate = picked);
+    bool hasPermission = await NoteActionHelper.ensureNotificationPermission(
+      context,
+    );
+    if (hasPermission) {
+      if (!mounted) return;
+      final picked = await NoteActionHelper.pickDateTime(context);
+      if (picked != null) setState(() => _selectedScheduleDate = picked);
+    }
   }
 
+  /// permission check and alarm pick
   Future<void> _handleAlarmPick() async {
-    final picked = await NoteActionHelper.pickReminder(context);
-    if (picked != null) setState(() => _selectedAlarmDate = picked);
+    bool hasPermission = await NoteActionHelper.ensureNotificationPermission(
+      context,
+    );
+    if (hasPermission) {
+      if (!mounted) return;
+      final picked = await NoteActionHelper.pickReminder(context);
+      if (picked != null) setState(() => _selectedAlarmDate = picked);
+    }
   }
 
-  void _onTapsaveNote() {
+  /// note save and dynamic notification scheduling
+  void _onTapsaveNote() async {
     final title = _titleController.text.trim();
     final content = _contentController.text.trim();
 
@@ -242,8 +258,12 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
       return;
     }
 
+    final int uniqueId = DateTime.now().millisecondsSinceEpoch.remainder(
+      100000,
+    );
+
     final newNote = NoteModel(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
+      id: uniqueId.toString(),
       title: title,
       content: content,
       date: DateTime.now().toIso8601String(),
@@ -256,6 +276,18 @@ class _AddNoteScreenState extends State<AddNoteScreen> {
       reminderOffsetType: ReminderOffsetType.exact,
     );
 
+    /// dynamic notification fire
+    final DateTime? reminderTime = _selectedAlarmDate ?? _selectedScheduleDate;
+    if (reminderTime != null && reminderTime.isAfter(DateTime.now())) {
+      await NotificationService().scheduleNotification(
+        id: uniqueId,
+        title: title.isNotEmpty ? title : 'Note Reminder 🔔',
+        body: content.isNotEmpty ? content : 'You have a scheduled note task!',
+        scheduledTime: reminderTime,
+      );
+    }
+
+    if (!mounted) return;
     context.read<AddBloc>().add(AddNoteEvent(newNote));
   }
 }

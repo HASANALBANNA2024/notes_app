@@ -1,10 +1,12 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:notes_app/features/dashboard/main_dashboard_screen.dart';
-import '../../../core/widgets/screen_background.dart';
-import '../../../core/widgets/app_text.dart';
-import '../../../core/widgets/app_icon.dart';
+import 'package:permission_handler/permission_handler.dart';
 
+import '../../../core/widgets/app_icon.dart';
+import '../../../core/widgets/app_text.dart';
+import '../../../core/widgets/screen_background.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -17,14 +19,18 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    Timer(const Duration(seconds: 3), () {
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainDashboardScreen()),
-        );
-      }
-    });
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    await Permission.notification.request();
+    await Future.delayed(const Duration(seconds: 3));
+    if (mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MainDashboardScreen()),
+      );
+    }
   }
 
   @override
@@ -53,23 +59,20 @@ class _SplashScreenState extends State<SplashScreen> {
                     ],
                   ),
                   child: const Center(
-                    child: AppIcon(
-                      icon: Icons.edit_note_rounded,
-                      size: 58,
-                    ),
+                    child: AppIcon(icon: Icons.edit_note_rounded, size: 58),
                   ),
                 ),
               ),
               const SizedBox(height: 28),
               const AppText(
-                 'Notes',
+                'Notes',
                 fontSize: 34,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
               ),
               const SizedBox(height: 8),
               const AppText(
-               'Keep Your Ideas Organized',
+                'Keep Your Ideas Organized',
                 fontSize: 15,
                 fontWeight: FontWeight.w400,
                 color: Color(0xFF94A3B8),
@@ -79,7 +82,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
                   3,
-                      (index) => Container(
+                  (index) => Container(
                     margin: const EdgeInsets.symmetric(horizontal: 4),
                     width: 8,
                     height: 8,
@@ -92,7 +95,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
               const Spacer(),
               const AppText(
-                 'v1.0.0',
+                'v1.0.0',
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
                 color: Color(0xFF64748B),

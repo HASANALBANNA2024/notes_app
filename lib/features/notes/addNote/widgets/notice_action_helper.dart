@@ -1,9 +1,75 @@
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../../../core/utils/reminder_picker.dart';
 
 class NoteActionHelper {
-  /// Date & Time Picker
+  /// Notification Permission Check & Settings Fallback
+  static Future<bool> ensureNotificationPermission(BuildContext context) async {
+    PermissionStatus status = await Permission.notification.status;
+
+    if (status.isGranted) {
+      return true;
+    }
+
+    if (status.isDenied) {
+      status = await Permission.notification.request();
+      if (status.isGranted) return true;
+    }
+
+    if (status.isPermanentlyDenied || status.isRestricted) {
+      if (context.mounted) {
+        await showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Notification Permission Needed'),
+            content: const Text(
+              'Please allow notification permission to receive alarms and task reminders.',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(context);
+                  await openAppSettings();
+                },
+                child: const Text('Open Settings'),
+              ),
+            ],
+          ),
+        );
+      }
+    }
+
+    return false;
+  }
+
+  /// Schedule Picker calendar and time selector
+  static Future<DateTime?> pickDateTime(BuildContext context) async {
+    final DateTime? date = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2030),
+    );
+
+    if (date == null) return null;
+    if (!context.mounted) return null;
+
+    final TimeOfDay? time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (time == null) return null;
+
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
+
+  /// Date & Time Picker (Alarm / Reminder-for)
   static Future<DateTime?> pickReminder(BuildContext context) async {
     return await ReminderPicker.pickDateTime(context);
   }

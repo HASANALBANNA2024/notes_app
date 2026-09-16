@@ -21,6 +21,7 @@ dependencies:
   equatable: ^2.0.5
   google_fonts: ^6.1.0
   intl: ^0.20.3
+  permission_handler: ^13.0.2
 
 dev_dependencies:
   flutter_test:
