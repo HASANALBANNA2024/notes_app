@@ -1,43 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:notes_app/core/service/database_helper.dart';
-import 'package:notes_app/core/service/notification_service.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'app/app.dart';
+import 'app_bloc_provider.dart';
+import 'bloc/theme_cubit.dart';
+import 'screens/splash_screen.dart';
+import 'theme/app_theme.dart';
 
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  try {
-    /// ✅ FIX #7: sqflite DATABASE initialization with error handling
-    await DatabaseHelper.instance.database;
-    print('✅ Database initialized successfully');
-  } catch (e) {
-    print('❌ Database initialization error: $e');
-    // Log error but continue - app can still run in limited capacity
-  }
+  runApp(
+    const AppBlocProvider(
+      child: NotesApp(),
+    ),
+  );
+}
 
-  try {
-    /// ✅ FIX #7: Notification Service initialization with error handling
-    await NotificationService().init();
-    print('✅ Notification service initialized successfully');
-  } catch (e) {
-    print('❌ Notification service initialization error: $e');
-    // Log error but continue - app can run without notifications
-  }
+class NotesApp extends StatelessWidget {
+  const NotesApp({super.key});
 
-  try {
-    /// ✅ System UI styling
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-      ),
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ThemeCubit, ThemeMode>(
+      builder: (context, mode) {
+        return MaterialApp(
+          title: 'Notes App',
+          debugShowCheckedModeBanner: false,
+          themeMode: mode,
+          theme: AppTheme.buildTheme(brightness: Brightness.light),
+          darkTheme: AppTheme.buildTheme(brightness: Brightness.dark),
+          home: const SplashScreen(),
+        );
+      },
     );
-  } catch (e) {
-    print('⚠️ System UI styling error: $e');
-    // Non-critical error, continue
   }
-
-  runApp(const App());
 }
