@@ -6,19 +6,19 @@ import '../../core/widgets/app_theme.dart';
 class NoteBottomToolbar extends StatelessWidget {
   final bool isPinned;
   final bool isLocked;
-  final bool isFavorite; // 👈 Add parameter
+  final bool isFavorite;
   final VoidCallback onPinTap;
   final VoidCallback onLockTap;
-  final VoidCallback onFavoriteTap; // 👈 Add callback
+  final VoidCallback onFavoriteTap;
 
   const NoteBottomToolbar({
     super.key,
     required this.isPinned,
     required this.isLocked,
-    required this.isFavorite, // 👈 Required field
+    required this.isFavorite,
     required this.onPinTap,
     required this.onLockTap,
-    required this.onFavoriteTap, // 👈 Required field
+    required this.onFavoriteTap,
   });
 
   @override
@@ -34,20 +34,7 @@ class NoteBottomToolbar extends StatelessWidget {
             iconColor: isFavorite ? Colors.red : null,
             onTap: onFavoriteTap,
           ),
-          const SizedBox(
-            width: 10,
-          ),
-
-          /// Label Icon
-
-          /// Reminder Icon
-          AppIconButton(
-            icon: Icons.access_time,
-            onTap: () {},
-          ),
-          const SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
 
           /// Pin Button
           AppIconButton(
@@ -55,18 +42,13 @@ class NoteBottomToolbar extends StatelessWidget {
             iconColor: isPinned ? AppTheme.primary : null,
             onTap: onPinTap,
           ),
-          const SizedBox(
-            width: 10,
-          ),
+          const SizedBox(width: 10),
 
           /// Lock Button
           AppIconButton(
             icon: isLocked ? Icons.lock : Icons.lock_outline,
             iconColor: isLocked ? AppTheme.primary : null,
             onTap: onLockTap,
-          ),
-          const SizedBox(
-            width: 10,
           ),
         ],
       ),

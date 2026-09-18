@@ -29,14 +29,13 @@ class DatabaseHelper {
   Future<void> _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE notes (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      title TEXT NOT NULL,
-      content TEXT NOT NULL,
-      createdAt TEXT NOT NULL,
-      label TEXT NOT NULL,
-      isFavorite INTEGER NOT NULL DEFAULT 0,
-      isPinned INTEGER NOT NULL DEFAULT 0,
-      isLocked INTEGER NOT NULL DEFAULT 0
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        content TEXT NOT NULL,
+        createdAt TEXT NOT NULL,
+        isFavorite INTEGER NOT NULL DEFAULT 0,
+        isPinned INTEGER NOT NULL DEFAULT 0,
+        isLocked INTEGER NOT NULL DEFAULT 0 
       )
     ''');
   }

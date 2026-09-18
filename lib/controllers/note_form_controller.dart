@@ -9,7 +9,7 @@ class NoteFormController {
   late TextEditingController titleController;
   late TextEditingController contentController;
 
-  // 📌 Local State Management with ValueNotifier
+  /// Local State Management with ValueNotifier
   late ValueNotifier<bool> isPinnedNotifier;
   late ValueNotifier<bool> isLockedNotifier;
   late ValueNotifier<bool> isFavoriteNotifier;
@@ -39,7 +39,7 @@ class NoteFormController {
     isFavoriteNotifier.value = !isFavoriteNotifier.value;
   }
 
-  /// 💾 Save Note Action
+  /// Save Note Action
   void onTapSavedAndPop(BuildContext context) {
     final title = titleController.text.trim();
     final content = contentController.text.trim();

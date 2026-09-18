@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:notes_app/core/database/note_model.dart';
 import 'package:notes_app/core/widgets/app_icon_button.dart';
 import 'package:notes_app/core/widgets/app_text.dart';
-import 'package:notes_app/core/widgets/app_text_field.dart';
-import 'package:notes_app/features/widgets/note_bottom_toolbar.dart';
 
 import '../../controllers/note_form_controller.dart';
+import '../../core/widgets/app_text_field.dart';
 import '../../core/widgets/app_theme.dart';
+import '../widgets/bottom_toolbar_section.dart';
 
 class NewNoteScreen extends StatefulWidget {
   final NoteModel? note;
@@ -23,7 +23,9 @@ class _NewNoteScreenState extends State<NewNoteScreen> {
   @override
   void initState() {
     super.initState();
-    _formController = NoteFormController(note: widget.note);
+
+    /// Fixed parameter name matching controller constructor
+    _formController = NoteFormController(existingNote: widget.note);
   }
 
   @override
@@ -34,6 +36,9 @@ class _NewNoteScreenState extends State<NewNoteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    /// Screen Open/Rebuild Tracker
+    debugPrint(" NewNoteScreen Main Build Called");
+
     return Scaffold(
       backgroundColor: AppTheme.background,
       appBar: AppBar(
@@ -66,10 +71,7 @@ class _NewNoteScreenState extends State<NewNoteScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: Column(
           children: [
-            const Divider(
-              color: AppTheme.dividerColor,
-              thickness: 1,
-            ),
+            const Divider(color: AppTheme.dividerColor, thickness: 1),
             AppTextField(
               controller: _formController.titleController,
               hintText: 'Idea, thinks about of title',
@@ -77,16 +79,9 @@ class _NewNoteScreenState extends State<NewNoteScreen> {
               fontWeight: FontWeight.bold,
               maxLines: 1,
             ),
-            const SizedBox(
-              height: 10,
-            ),
-            const Divider(
-              color: AppTheme.dividerColor,
-              thickness: 1,
-            ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
+            const Divider(color: AppTheme.dividerColor, thickness: 1),
+            const SizedBox(height: 10),
             Expanded(
               child: AppTextField(
                 controller: _formController.contentController,
@@ -96,27 +91,10 @@ class _NewNoteScreenState extends State<NewNoteScreen> {
                 maxLines: null,
               ),
             ),
-            const Divider(
-              color: AppTheme.dividerColor,
-              thickness: 1,
-            ),
-            AnimatedBuilder(
-              animation: Listenable.merge([
-                _formController.isPinnedNotifier,
-                _formController.isLockedNotifier,
-                _formController.isFavoriteNotifier,
-              ]),
-              builder: (context, _) {
-                return NoteBottomToolbar(
-                  isPinned: _formController.isPinnedNotifier.value,
-                  isLocked: _formController.isLockedNotifier.value,
-                  isFavorite: _formController.isFavoriteNotifier.value,
-                  onPinTap: _formController.togglePin,
-                  onLockTap: _formController.toggleLock,
-                  onFavoriteTap: _formController.toggleFavorite,
-                );
-              },
-            )
+            const Divider(color: AppTheme.dividerColor, thickness: 1),
+
+            /// Isolated Bottom Toolbar Build Area
+            BottomToolbarSection(formController: _formController),
           ],
         ),
       ),
