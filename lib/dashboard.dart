@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:notes_app/features/home_screen/home_screen.dart';
 
 import '../core/database/note_model.dart';
 import 'core/bloc/bottom_navigation_navber/nav_bloc.dart';
@@ -34,7 +35,7 @@ class Dashboard extends StatelessWidget {
   Widget _getSelectedScreenBody(int index) {
     switch (index) {
       case 0:
-        return const Center(child: Text('Notes List Screen'));
+        return const HomeScreen();
       case 1:
         return const Center(child: Text('Labels Screen Content'));
       case 2:
