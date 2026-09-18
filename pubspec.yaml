@@ -12,7 +12,7 @@ dependencies:
   cupertino_icons: ^1.0.6
 
   # State management
-  flutter_bloc: ^8.1.5
+  flutter_bloc: ^9.1.1
   equatable: ^2.0.5
 
   # Local storage
@@ -24,7 +24,7 @@ dependencies:
   shared_preferences: ^2.2.2
 
   # Fonts (Sora + Inter, matching the mockup) — all applied through AppTheme
-  google_fonts: ^6.2.1
+  google_fonts: ^8.2.1
 
   # Utilities
   uuid: ^4.3.3
