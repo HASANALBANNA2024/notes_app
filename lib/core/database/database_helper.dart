@@ -29,12 +29,14 @@ class DatabaseHelper {
   Future<void> _createDB(Database db, int version) async {
     await db.execute('''
       CREATE TABLE notes (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        title TEXT NOT NULL,
-        content TEXT NOT NULL,
-        createdAt TEXT NOT NULL,
-        label TEXT NOT NULL,
-        isFavorite INTEGER NOT NULL DEFAULT 0
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      title TEXT NOT NULL,
+      content TEXT NOT NULL,
+      createdAt TEXT NOT NULL,
+      label TEXT NOT NULL,
+      isFavorite INTEGER NOT NULL DEFAULT 0,
+      isPinned INTEGER NOT NULL DEFAULT 0,
+      isLocked INTEGER NOT NULL DEFAULT 0
       )
     ''');
   }
@@ -45,21 +47,24 @@ class DatabaseHelper {
     return await db.insert('notes', note.toMap());
   }
 
-  /// READ: Get All Notes
+  /// READ: Get All Notes (Pinned notes first, then latest created)
   Future<List<NoteModel>> getAllNotes() async {
     final db = await instance.database;
-    final result = await db.query('notes', orderBy: 'id DESC');
+    final result = await db.query(
+      'notes',
+      orderBy: 'isPinned DESC, id DESC',
+    );
     return result.map((map) => NoteModel.fromMap(map)).toList();
   }
 
-  /// READ: Get Notes by Label
+  /// READ: Get Notes by Label (Pinned notes first, then latest created)
   Future<List<NoteModel>> getNotesByLabel(String label) async {
     final db = await instance.database;
     final result = await db.query(
       'notes',
       where: 'label = ?',
       whereArgs: [label],
-      orderBy: 'id DESC',
+      orderBy: 'isPinned DESC, id DESC',
     );
     return result.map((map) => NoteModel.fromMap(map)).toList();
   }
