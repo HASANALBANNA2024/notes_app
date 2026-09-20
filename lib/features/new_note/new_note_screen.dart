@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/core/database/note_model.dart';
 import 'package:notes_app/core/widgets/app_icon_button.dart';
 import 'package:notes_app/core/widgets/app_text.dart';
 
 import '../../controllers/note_form_controller.dart';
+import '../../core/bloc/note/note_bloc.dart';
+import '../../core/bloc/note/note_event.dart';
 import '../../core/widgets/app_text_field.dart';
 import '../../core/widgets/app_theme.dart';
 import '../widgets/bottom_toolbar_section.dart';
@@ -57,15 +60,36 @@ class _NewNoteScreenState extends State<NewNoteScreen> {
           fontWeight: FontWeight.bold,
           textAlign: TextAlign.start,
         ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: AppIconButton(
-              icon: Icons.check,
-              onTap: () => _formController.onTapSavedAndPop(context),
-            ),
-          )
-        ],
+          actions: [
+            Padding(
+              padding: const EdgeInsets.only(right: 16),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ///  Delete Icon  Edit Note / existing note)
+                  if (widget.note != null) ...[
+                    AppIconButton(
+                      icon: Icons.delete_outline,
+                      iconColor: Colors.red,
+                      onTap: () {
+                        ///  Trigger Delete Event NoteBloc
+                        if (widget.note?.id != null) {
+                          context.read<NoteBloc>().add(DeleteNoteEvent(widget.note!.id!));
+                          Navigator.pop(context);
+                        }
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  ///  Save / Check Icon
+                  AppIconButton(
+                    icon: Icons.check,
+                    onTap: () => _formController.onTapSavedAndPop(context),
+                  ),
+                ],
+              ),
+            )
+          ]
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),

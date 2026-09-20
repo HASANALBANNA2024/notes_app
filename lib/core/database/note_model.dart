@@ -4,8 +4,8 @@ class NoteModel {
   final String content;
   final String createdAt;
   final bool isFavorite;
-  final bool isPinned; // 📌 Pin state
-  final bool isLocked; // 🔒 Lock state
+  final bool isPinned;
+  final bool isLocked;
 
   NoteModel({
     this.id,

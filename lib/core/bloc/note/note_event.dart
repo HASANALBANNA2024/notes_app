@@ -22,3 +22,16 @@ class DeleteNoteEvent extends NoteEvent {
   final int id;
   DeleteNoteEvent(this.id);
 }
+
+
+/// multi selection events
+class ToggleSelectNoteEvent extends NoteEvent{
+  final int noteId;
+  ToggleSelectNoteEvent(this.noteId);
+}
+
+class SelectAllNotesEvent extends NoteEvent{}
+
+class ClearSelectionEvent extends NoteEvent {}
+
+class DeleteSelectedNotesEvent extends NoteEvent {}

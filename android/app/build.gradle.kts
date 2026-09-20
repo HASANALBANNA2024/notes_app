@@ -7,8 +7,8 @@ plugins {
 android {
     namespace = "com.example.notes_app"
 
-    // flutter.compileSdkVersion এর বদলে সরাসরি ৩৭ দেওয়া হলো
-    compileSdk = 37
+    // Plugin requirement অনুযায়ী 36 দেওয়া হলো
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     compileOptions {
@@ -24,7 +24,7 @@ android {
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion // Desugaring minSdk 21
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

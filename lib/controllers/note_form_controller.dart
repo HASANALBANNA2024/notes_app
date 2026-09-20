@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/core/bloc/note/note_bloc.dart';
 import 'package:notes_app/core/bloc/note/note_event.dart';
-
 import '../core/database/note_model.dart';
 
 class NoteFormController {
