@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/core/bloc/note/note_event.dart';
 import 'package:notes_app/core/database/database_helper.dart';
+
 import 'note_state.dart';
 
 class NoteBloc extends Bloc<NoteEvent, NoteState> {
@@ -95,6 +96,22 @@ class NoteBloc extends Bloc<NoteEvent, NoteState> {
         } catch (e) {
           emit(NoteErrorState("Failed to delete selected notes: $e"));
         }
+      }
+    });
+
+    /// search Notes
+    on<SearchNotesEvent>((event, emit) {
+      if (state is NoteLoadedState) {
+        final currentState = state as NoteLoadedState;
+        emit(currentState.copyWith(searchQuery: event.query));
+      }
+    });
+
+    /// search clear notes
+    on<ClearSearchEvent>((event, emit) {
+      if (state is NoteLoadedState) {
+        final currentState = state as NoteLoadedState;
+        emit(currentState.copyWith(searchQuery: ''));
       }
     });
   }

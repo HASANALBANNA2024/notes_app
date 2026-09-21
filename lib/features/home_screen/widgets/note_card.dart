@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/core/database/note_model.dart';
-import 'package:notes_app/core/widgets/app_theme.dart';
+
+import '../../../core/widgets/app_theme.dart';
 
 class NoteCard extends StatelessWidget {
   final NoteModel note;
@@ -11,11 +12,12 @@ class NoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 0.5,
-      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 0,
+      color: Colors
+          .transparent, // Background transparent so outer container color shows
+      margin: EdgeInsets.zero, // 📌 Extra margin removed to fix border offset
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: const BorderSide(color: AppTheme.dividerColor),
       ),
       child: ListTile(
         contentPadding: const EdgeInsets.all(16),
