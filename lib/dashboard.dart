@@ -2,16 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:notes_app/core/widgets/note_sheet_helper.dart';
 import 'package:notes_app/features/home_screen/home_screen.dart';
-import '../core/database/note_model.dart';
+
 import 'core/bloc/bottom_navigation_navber/nav_bloc.dart';
 import 'core/bloc/bottom_navigation_navber/nav_event.dart';
 import 'core/bloc/bottom_navigation_navber/nav_state.dart';
-import 'features/new_note/new_note_screen.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -42,8 +39,7 @@ class Dashboard extends StatelessWidget {
                 label: 'Notes',
               ),
               BottomNavigationBarItem(
-                icon: Icon(Icons.add_circle,
-                    size: 38, color: Colors.blue),
+                icon: Icon(Icons.add_circle, size: 38, color: Colors.blue),
                 label: 'Add',
               ),
             ],
@@ -52,8 +48,6 @@ class Dashboard extends StatelessWidget {
       },
     );
   }
-
-
 
   /// Active Tab Body
   Widget _getSelectedScreenBody(int index) {
