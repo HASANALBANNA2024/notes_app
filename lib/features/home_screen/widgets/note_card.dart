@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:notes_app/core/database/note_model.dart';
-
 import '../../../core/widgets/app_theme.dart';
 
 class NoteCard extends StatelessWidget {
@@ -14,8 +13,8 @@ class NoteCard extends StatelessWidget {
     return Card(
       elevation: 0,
       color: Colors
-          .transparent, // Background transparent so outer container color shows
-      margin: EdgeInsets.zero, // 📌 Extra margin removed to fix border offset
+          .transparent, /// Background transparent so outer container color shows
+      margin: EdgeInsets.zero, /// Extra margin removed to fix border offset
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
@@ -49,10 +48,6 @@ class NoteCard extends StatelessWidget {
                     width: 6,
                   ),
                   const Icon(Icons.push_pin, size: 16, color: AppTheme.primary),
-                ],
-                if (note.isLocked) ...[
-                  const SizedBox(width: 6),
-                  const Icon(Icons.lock, size: 16, color: Colors.grey),
                 ],
               ],
             ),

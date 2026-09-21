@@ -35,7 +35,6 @@ class DatabaseHelper {
         createdAt TEXT NOT NULL,
         isFavorite INTEGER NOT NULL DEFAULT 0,
         isPinned INTEGER NOT NULL DEFAULT 0,
-        isLocked INTEGER NOT NULL DEFAULT 0 
       )
     ''');
   }

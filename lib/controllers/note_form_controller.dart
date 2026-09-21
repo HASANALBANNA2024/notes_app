@@ -10,7 +10,6 @@ class NoteFormController {
 
   /// Local State Management with ValueNotifier
   late ValueNotifier<bool> isPinnedNotifier;
-  late ValueNotifier<bool> isLockedNotifier;
   late ValueNotifier<bool> isFavoriteNotifier;
 
   final NoteModel? existingNote;
@@ -21,7 +20,6 @@ class NoteFormController {
         TextEditingController(text: existingNote?.content ?? '');
 
     isPinnedNotifier = ValueNotifier<bool>(existingNote?.isPinned ?? false);
-    isLockedNotifier = ValueNotifier<bool>(existingNote?.isLocked ?? false);
     isFavoriteNotifier = ValueNotifier<bool>(existingNote?.isFavorite ?? false);
   }
 
@@ -30,9 +28,6 @@ class NoteFormController {
     isPinnedNotifier.value = !isPinnedNotifier.value;
   }
 
-  void toggleLock() {
-    isLockedNotifier.value = !isLockedNotifier.value;
-  }
 
   void toggleFavorite() {
     isFavoriteNotifier.value = !isFavoriteNotifier.value;
@@ -50,7 +45,6 @@ class NoteFormController {
         content: content,
         createdAt: existingNote?.createdAt ?? DateTime.now().toString(),
         isPinned: isPinnedNotifier.value,
-        isLocked: isLockedNotifier.value,
         isFavorite: isFavoriteNotifier.value,
       );
 
@@ -68,7 +62,6 @@ class NoteFormController {
     titleController.dispose();
     contentController.dispose();
     isPinnedNotifier.dispose();
-    isLockedNotifier.dispose();
     isFavoriteNotifier.dispose();
   }
 }

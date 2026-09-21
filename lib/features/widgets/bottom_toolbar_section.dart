@@ -16,17 +16,14 @@ class BottomToolbarSection extends StatelessWidget {
     return AnimatedBuilder(
       animation: Listenable.merge([
         formController.isPinnedNotifier,
-        formController.isLockedNotifier,
         formController.isFavoriteNotifier,
       ]),
       builder: (context, _) {
         debugPrint("BottomToolbar Only Rebuilt!");
         return NoteBottomToolbar(
           isPinned: formController.isPinnedNotifier.value,
-          isLocked: formController.isLockedNotifier.value,
           isFavorite: formController.isFavoriteNotifier.value,
           onPinTap: formController.togglePin,
-          onLockTap: formController.toggleLock,
           onFavoriteTap: formController.toggleFavorite,
         );
       },

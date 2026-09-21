@@ -5,7 +5,6 @@ class NoteModel {
   final String createdAt;
   final bool isFavorite;
   final bool isPinned;
-  final bool isLocked;
 
   NoteModel({
     this.id,
@@ -14,7 +13,7 @@ class NoteModel {
     required this.createdAt,
     this.isFavorite = false,
     this.isPinned = false,
-    this.isLocked = false,
+
   });
 
   factory NoteModel.fromMap(Map<String, dynamic> map) {
@@ -25,7 +24,7 @@ class NoteModel {
       createdAt: map['createdAt'] as String,
       isFavorite: (map['isFavorite'] as int? ?? 0) == 1,
       isPinned: (map['isPinned'] as int? ?? 0) == 1,
-      isLocked: (map['isLocked'] as int? ?? 0) == 1,
+
     );
   }
 
@@ -37,7 +36,6 @@ class NoteModel {
       'createdAt': createdAt,
       'isFavorite': isFavorite ? 1 : 0,
       'isPinned': isPinned ? 1 : 0,
-      'isLocked': isLocked ? 1 : 0,
     };
   }
 }

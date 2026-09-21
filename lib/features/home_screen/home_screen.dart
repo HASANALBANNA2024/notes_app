@@ -102,13 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       iconSize: 22,
                     ),
                     const SizedBox(width: 5),
-                    AppIconButton(
-                      icon: Icons.more_vert,
-                      onTap: () {},
-                      backgroundColor: Colors.white60,
-                      iconColor: Colors.black,
-                      iconSize: 22,
-                    )
                   ],
                 ),
           body: _buildBody(context, state),

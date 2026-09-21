@@ -5,19 +5,15 @@ import '../../core/widgets/app_theme.dart';
 
 class NoteBottomToolbar extends StatelessWidget {
   final bool isPinned;
-  final bool isLocked;
   final bool isFavorite;
   final VoidCallback onPinTap;
-  final VoidCallback onLockTap;
   final VoidCallback onFavoriteTap;
 
   const NoteBottomToolbar({
     super.key,
     required this.isPinned,
-    required this.isLocked,
     required this.isFavorite,
     required this.onPinTap,
-    required this.onLockTap,
     required this.onFavoriteTap,
   });
 
@@ -41,14 +37,6 @@ class NoteBottomToolbar extends StatelessWidget {
             icon: isPinned ? Icons.push_pin : Icons.push_pin_outlined,
             iconColor: isPinned ? AppTheme.primary : null,
             onTap: onPinTap,
-          ),
-          const SizedBox(width: 10),
-
-          /// Lock Button
-          AppIconButton(
-            icon: isLocked ? Icons.lock : Icons.lock_outline,
-            iconColor: isLocked ? AppTheme.primary : null,
-            onTap: onLockTap,
           ),
         ],
       ),
