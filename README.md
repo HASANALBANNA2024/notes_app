@@ -1,6 +1,6 @@
 # 📝 Note Taking App (Flutter & BLoC)
 
-A feature-rich, high-performance offline note-taking application built using **Flutter**, state management powered by **BLoC Pattern**, and local persistent storage using **SQLite Database**.
+A feature-rich, high-performance offline note-taking application built using **Flutter**, state management powered by **BLoC Pattern**, and local persistent storage using **SQFlite (SQLite Database)**.
 
 ---
 
@@ -8,20 +8,25 @@ A feature-rich, high-performance offline note-taking application built using **F
 
 [![Flutter](https://img.shields.io/badge/Flutter-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/Dart-0175C2?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
-[![BLoC Architecture](https://img.shields.io/badge/State_Management-BLoC-blue?style=for-the-badge)](https://bloclibrary.dev)
-[![SQLite](https://img.shields.io/badge/Database-SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://www.sqlite.org)
-[![Platform](https://img.shields.io/badge/Platform-Android%20%7C%20iOS%20%7C%20Web%20%7C%20Desktop-brightgreen?style=for-the-badge)]()
+[![Flutter BLoC](https://img.shields.io/badge/FLUTTER__BLOC-9.1.1-02569B?style=for-the-badge&logo=flutter&logoColor=white)](https://pub.dev/packages/flutter_bloc)
+[![SQFlite](https://img.shields.io/badge/SQFLITE-2.4.0-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://pub.dev/packages/sqflite)
+[![Equatable](https://img.shields.io/badge/EQUATABLE-2.0.5-0175C2?style=for-the-badge)](https://pub.dev/packages/equatable)
+[![Shared Preferences](https://img.shields.io/badge/SHARED__PREFERENCES-2.2.2-E95420?style=for-the-badge&logo=android&logoColor=white)](https://pub.dev/packages/shared_preferences)
+[![Google Fonts](https://img.shields.io/badge/GOOGLE__FONTS-8.2.1-DFB317?style=for-the-badge&logo=google&logoColor=white)](https://pub.dev/packages/google_fonts)
+[![Intl](https://img.shields.io/badge/INTL-0.19.0-0175C2?style=for-the-badge)](https://pub.dev/packages/intl)
+[![UUID](https://img.shields.io/badge/UUID-4.3.3-02569B?style=for-the-badge)](https://pub.dev/packages/uuid)
+[![Flutter Analyze](https://img.shields.io/badge/FLUTTER_ANALYZE-0_ISSUES-brightgreen?style=for-the-badge)](https://flutter.dev)
 
 ---
 
 ## ✨ Features
 
-- 📝 **Create, Edit & Delete Notes:** Fast and intuitive interface to manage daily notes.
+- 📝 **Create, Edit & Delete Notes:** Fast and intuitive interface to manage daily notes seamlessly.
 - 🔍 **Real-time Search:** Built-in `SearchDelegate` for instant keyword searching across saved notes.
-- 🎨 **Rich UI & Custom Bottom Sheets:** Seamless UI flow with smooth bottom sheet integration.
+- 🎨 **Rich UI & Custom Bottom Sheets:** Seamless user interface flow with smooth dynamic bottom sheet integration.
 - 🔘 **Multi-Selection Mode:** Select multiple items directly from the dashboard for batch actions.
-- ⚡ **BLoC State Management:** Decoupled business logic ensuring reactive and clean code flow.
-- 💾 **Local Offline Storage:** Full SQLite database support for safe offline data handling.
+- ⚡ **BLoC State Management:** Decoupled business logic with `flutter_bloc` & `equatable` ensuring reactive and clean code flow.
+- 💾 **Local Offline Storage:** Full SQLite database support via `sqflite` for reliable offline data persistence.
 - 📱 **Cross-Platform Ready:** Native support for Android, iOS, macOS, Windows, Linux, and Web.
 
 ---
